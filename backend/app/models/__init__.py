@@ -1,0 +1,80 @@
+from app.models.assistant_settings import AssistantSettings
+from app.models.conversation import ConversationSession
+from app.models.conversation_message import ConversationMessage
+from app.models.daily_life import (
+    CalendarEvent,
+    DailyRoutine,
+    NotificationPreference,
+    Reminder,
+    TaskItem,
+    TimetableEntry,
+)
+from app.models.device_notification import DeviceRegistration, NotificationRecord
+from app.models.family import (
+    FamilyGroup,
+    FamilyInvitation,
+    FamilyMember,
+    FamilyPermission,
+    SharedReminder,
+)
+from app.models.memory import MemoryAuditEvent, MemoryCategory, MemoryRecord
+from app.models.phone_messaging import (
+    AppPreference,
+    ContactAlias,
+    MessagingPreference,
+    MessagingTemplate,
+    PhoneActionPreference,
+)
+from app.models.security_automation import (
+    AutomationAction,
+    AutomationCondition,
+    AutomationExecutionLog,
+    AutomationRule,
+    LoginAttempt,
+    SecurityEvent,
+    SessionRevocation,
+    UserSecuritySetting,
+)
+from app.models.user import EmailVerificationToken, PasswordResetToken, User
+from app.models.user_profile import UserProfile
+from app.models.user_session import UserSession
+
+__all__ = [
+    "User",
+    "PasswordResetToken",
+    "EmailVerificationToken",
+    "UserProfile",
+    "UserSession",
+    "AssistantSettings",
+    "ConversationSession",
+    "ConversationMessage",
+    "MemoryCategory",
+    "MemoryRecord",
+    "MemoryAuditEvent",
+    "PhoneActionPreference",
+    "AppPreference",
+    "ContactAlias",
+    "MessagingPreference",
+    "MessagingTemplate",
+    "Reminder",
+    "TaskItem",
+    "TimetableEntry",
+    "CalendarEvent",
+    "DailyRoutine",
+    "NotificationPreference",
+    "DeviceRegistration",
+    "NotificationRecord",
+    "FamilyGroup",
+    "FamilyMember",
+    "FamilyInvitation",
+    "SharedReminder",
+    "FamilyPermission",
+    "SecurityEvent",
+    "LoginAttempt",
+    "UserSecuritySetting",
+    "SessionRevocation",
+    "AutomationRule",
+    "AutomationCondition",
+    "AutomationAction",
+    "AutomationExecutionLog",
+]

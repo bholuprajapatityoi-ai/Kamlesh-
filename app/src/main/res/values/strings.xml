@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">GOLU</string>
+    <string name="golu_greeting_default">Hello! Boss, GOLU ready hai!</string>
+    <string name="wake_word_notification_title">GOLU Wake-Word Active</string>
+    <string name="wake_word_notification_text">Listening locally for \"Hey Golu\". Tap to open.</string>
+    <string name="wake_word_channel_name">Hey Golu Wake-Word Service</string>
+    <string name="reminder_channel_name">GOLU Daily Life &amp; Reminders</string>
+</resources>
