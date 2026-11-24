@@ -40,10 +40,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.presentation.components.PinUnlockOverlay
 import com.example.presentation.screens.ActivitiesScreen
 import com.example.presentation.screens.AssistantScreen
@@ -58,7 +60,14 @@ import com.example.presentation.screens.PhoneWhatsAppScreen
 import com.example.presentation.screens.ProfileScreen
 import com.example.presentation.screens.SecurityDashboardScreen
 import com.example.presentation.screens.SettingsScreen
+import com.example.presentation.screens.v2.BrainKnowledgeScreen
+import com.example.presentation.screens.v2.EnvironmentPersonalizationScreen
+import com.example.presentation.screens.v2.Golu2DashboardScreen
+import com.example.presentation.screens.v2.MobilitySystemScreen
+import com.example.presentation.screens.v2.ProductivityCreativeScreen
+import com.example.presentation.screens.v2.VisionPerceptionScreen
 import com.example.presentation.viewmodel.GoluFeaturesViewModel
+import com.example.presentation.viewmodel.GoluV2ViewModel
 import com.example.presentation.viewmodel.GoluViewModel
 
 sealed class GoluRoute(
@@ -83,6 +92,12 @@ sealed class GoluRoute(
         const val SECURITY = "security"
         const val AUTOMATION = "automation"
         const val GUIDE = "guide"
+        const val V2_HUB = "v2_hub"
+        const val V2_VISION = "v2_vision/{tab}"
+        const val V2_BRAIN = "v2_brain/{tab}"
+        const val V2_PRODUCTIVITY = "v2_productivity/{tab}"
+        const val V2_ENVIRONMENT = "v2_environment/{tab}"
+        const val V2_MOBILITY = "v2_mobility/{tab}"
     }
 }
 
@@ -90,6 +105,7 @@ sealed class GoluRoute(
 fun GoluMainShell(
     viewModel: GoluViewModel,
     featuresViewModel: GoluFeaturesViewModel,
+    v2ViewModel: GoluV2ViewModel,
 ) {
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -475,6 +491,71 @@ fun GoluMainShell(
 
                         composable(GoluRoute.GUIDE) {
                             GuideAndDocsScreen(
+                                onBack = { navController.popBackStack() },
+                            )
+                        }
+
+                        // Phase 16-20: GOLU 2.0 Dashboard & Module Screens
+                        composable(GoluRoute.V2_HUB) {
+                            Golu2DashboardScreen(
+                                onNavigateRoute = ::navigateSecondary,
+                                onBack = { navController.popBackStack() },
+                            )
+                        }
+                        composable(
+                            route = GoluRoute.V2_VISION,
+                            arguments = listOf(navArgument("tab") { type = NavType.IntType; defaultValue = 0 }),
+                        ) { backStackEntry ->
+                            val tab = backStackEntry.arguments?.getInt("tab") ?: 0
+                            VisionPerceptionScreen(
+                                v2ViewModel = v2ViewModel,
+                                initialTab = tab,
+                                onBack = { navController.popBackStack() },
+                            )
+                        }
+                        composable(
+                            route = GoluRoute.V2_BRAIN,
+                            arguments = listOf(navArgument("tab") { type = NavType.IntType; defaultValue = 0 }),
+                        ) { backStackEntry ->
+                            val tab = backStackEntry.arguments?.getInt("tab") ?: 0
+                            BrainKnowledgeScreen(
+                                v2ViewModel = v2ViewModel,
+                                initialTab = tab,
+                                onBack = { navController.popBackStack() },
+                            )
+                        }
+                        composable(
+                            route = GoluRoute.V2_PRODUCTIVITY,
+                            arguments = listOf(navArgument("tab") { type = NavType.IntType; defaultValue = 0 }),
+                        ) { backStackEntry ->
+                            val tab = backStackEntry.arguments?.getInt("tab") ?: 0
+                            ProductivityCreativeScreen(
+                                v2ViewModel = v2ViewModel,
+                                initialTab = tab,
+                                onBack = { navController.popBackStack() },
+                            )
+                        }
+                        composable(
+                            route = GoluRoute.V2_ENVIRONMENT,
+                            arguments = listOf(navArgument("tab") { type = NavType.IntType; defaultValue = 0 }),
+                        ) { backStackEntry ->
+                            val tab = backStackEntry.arguments?.getInt("tab") ?: 0
+                            EnvironmentPersonalizationScreen(
+                                v2ViewModel = v2ViewModel,
+                                initialTab = tab,
+                                onBack = { navController.popBackStack() },
+                            )
+                        }
+                        composable(
+                            route = GoluRoute.V2_MOBILITY,
+                            arguments = listOf(navArgument("tab") { type = NavType.IntType; defaultValue = 0 }),
+                        ) { backStackEntry ->
+                            val tab = backStackEntry.arguments?.getInt("tab") ?: 0
+                            MobilitySystemScreen(
+                                v2ViewModel = v2ViewModel,
+                                diagnostics = diagnostics,
+                                initialTab = tab,
+                                onRetryConnection = viewModel::retryBackendConnection,
                                 onBack = { navController.popBackStack() },
                             )
                         }

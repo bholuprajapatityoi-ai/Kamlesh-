@@ -4,6 +4,7 @@ import httpx
 from fastapi import HTTPException, status
 
 from app.core.config import get_settings
+from app.services.golu_v2_ai import _openai_post_with_retry
 from app.services.response_formatter import response_formatter
 
 
@@ -50,23 +51,13 @@ class OnlineAiService:
             "max_tokens": 500,
         }
 
-        try:
-            async with httpx.AsyncClient(timeout=settings.OPENAI_TIMEOUT_SECONDS) as client:
-                resp = await client.post(
-                    "https://api.openai.com/v1/chat/completions",
-                    headers=headers,
-                    json=payload,
-                )
-        except httpx.TimeoutException as exc:
-            raise HTTPException(
-                status_code=status.HTTP_504_GATEWAY_TIMEOUT,
-                detail="OpenAI upstream request timed out.",
-            ) from exc
-        except httpx.RequestError as exc:
-            raise HTTPException(
-                status_code=status.HTTP_502_BAD_GATEWAY,
-                detail=f"Failed to reach OpenAI API: {type(exc).__name__}",
-            ) from exc
+        resp = await _openai_post_with_retry(
+            url="https://api.openai.com/v1/chat/completions",
+            headers=headers,
+            payload=payload,
+            timeout_seconds=settings.OPENAI_TIMEOUT_SECONDS,
+            service_label="OpenAI API",
+        )
 
         if resp.status_code == 429:
             raise HTTPException(

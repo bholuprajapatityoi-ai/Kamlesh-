@@ -17,6 +17,23 @@ from app.models.family import (
     FamilyPermission,
     SharedReminder,
 )
+from app.models.golu_v2 import (
+    CodingHistory,
+    CreativeAsset,
+    DiagnosticEvent,
+    ExpenseBudget,
+    ExpenseRecord,
+    KnowledgeDocument,
+    NotificationInsight,
+    ResearchReport,
+    SmartHomeConfig,
+    SmartHomeDevice,
+    StudySession,
+    SyncCheckpoint,
+    TranslationHistory,
+    TravelPlan,
+    VoiceRecording,
+)
 from app.models.memory import MemoryAuditEvent, MemoryCategory, MemoryRecord
 from app.models.phone_messaging import (
     AppPreference,
@@ -77,4 +94,19 @@ __all__ = [
     "AutomationCondition",
     "AutomationAction",
     "AutomationExecutionLog",
+    "KnowledgeDocument",
+    "NotificationInsight",
+    "TranslationHistory",
+    "ResearchReport",
+    "CodingHistory",
+    "CreativeAsset",
+    "VoiceRecording",
+    "SmartHomeConfig",
+    "SmartHomeDevice",
+    "ExpenseBudget",
+    "ExpenseRecord",
+    "StudySession",
+    "TravelPlan",
+    "SyncCheckpoint",
+    "DiagnosticEvent",
 ]

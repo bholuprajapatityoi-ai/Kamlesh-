@@ -7,6 +7,7 @@ import com.example.core.BackendEndpointInfo
 import com.example.data.remote.GoluApiService
 import com.example.data.remote.dto.AiChatRequestDto
 import com.example.data.remote.dto.ClearContextRequestDto
+import com.example.domain.golu2.OfflineBrainV2
 import com.example.domain.model.GoluSettings
 import com.example.domain.model.IntentType
 import com.example.domain.model.RoutingTarget
@@ -71,6 +72,16 @@ class HybridAiRouter(
                 pendingCallTarget = offlineRes.pendingCallTarget,
                 pendingWhatsAppRecipient = offlineRes.pendingWhatsAppRecipient,
                 pendingWhatsAppDraft = offlineRes.pendingWhatsAppDraft,
+            )
+        }
+
+        val offlineV2 = OfflineBrainV2.evaluateLocalQuery(userText)
+        if (offlineV2.handled) {
+            recordTemporaryTurn(userText, offlineV2.reply, settings.keepSessionContext)
+            return HybridAiResult(
+                reply = offlineV2.reply,
+                routingTarget = RoutingTarget.OFFLINE_ENGINE,
+                intentType = intent,
             )
         }
 

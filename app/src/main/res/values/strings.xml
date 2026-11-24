@@ -5,4 +5,6 @@
     <string name="wake_word_notification_text">Listening locally for \"Hey Golu\". Tap to open.</string>
     <string name="wake_word_channel_name">Hey Golu Wake-Word Service</string>
     <string name="reminder_channel_name">GOLU Daily Life &amp; Reminders</string>
+    <string name="golu_accessibility_description">Optional user-initiated Screen Understanding helper. Reads visible non-password text ONLY when Boss explicitly activates Screen Scan.</string>
+    <string name="golu_notification_listener_label">GOLU Smart Notification Intelligence</string>
 </resources>

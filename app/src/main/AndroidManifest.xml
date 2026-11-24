@@ -15,6 +15,12 @@
     <!-- Phase 8: Requested at runtime ONLY when Boss explicitly invokes contact lookup -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
+    <!-- Phase 16 & 20: Camera AI & Travel Intelligence (requested at runtime only on explicit feature activation) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
     <!-- Package visibility for Quick Actions, WhatsApp sharing, Settings, and Alarms without QUERY_ALL_PACKAGES -->
     <queries>
         <intent>
@@ -82,6 +88,31 @@
             android:name=".domain.daily.ReminderActionReceiver"
             android:enabled="true"
             android:exported="false" />
+
+        <!-- Phase 16 Feature 1: Optional explicit user-triggered Screen Understanding AccessibilityService -->
+        <service
+            android:name=".domain.golu2.GoluAccessibilityVisionService"
+            android:exported="false"
+            android:label="GOLU Screen Understanding"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/golu_accessibility_config" />
+        </service>
+
+        <!-- Phase 16 Feature 4: Optional user-authorized NotificationListenerService -->
+        <service
+            android:name=".domain.golu2.GoluNotificationListenerService"
+            android:exported="true"
+            android:label="@string/golu_notification_listener_label"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

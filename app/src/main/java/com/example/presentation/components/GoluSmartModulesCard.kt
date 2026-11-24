@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.AutoFixHigh
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Call
@@ -85,6 +86,21 @@ fun GoluSmartModulesCard(
             color = MaterialTheme.colorScheme.onSurface,
         )
         Spacer(Modifier.height(8.dp))
+        Button(
+            onClick = { onOpenModule("v2_hub") },
+            modifier = Modifier.fillMaxWidth().height(48.dp).testTag("open_golu2_hub_button"),
+            shape = RoundedCornerShape(14.dp),
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = GoluElectricBlue,
+                    contentColor = androidx.compose.ui.graphics.Color.White,
+                ),
+        ) {
+            Icon(Icons.Filled.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Text("GOLU 2.0 Hub (20 AI Modules)")
+        }
+        Spacer(Modifier.height(10.dp))
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),

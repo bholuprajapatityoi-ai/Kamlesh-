@@ -37,7 +37,10 @@ class Settings(BaseSettings):
     AI_PROVIDER: str = "openai"
     OPENAI_API_KEY: str = ""
     OPENAI_MODEL: str = "gpt-4o-mini"
+    OPENAI_VISION_MODEL: str = "gpt-4o-mini"
+    OPENAI_IMAGE_MODEL: str = "dall-e-3"
     OPENAI_TIMEOUT_SECONDS: float = 25.0
+    TAVILY_API_KEY: str = ""
 
     SMTP_HOST: str = ""
     SMTP_PORT: int = 587

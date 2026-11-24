@@ -2,21 +2,23 @@ package com.example.di
 
 import android.content.Context
 import com.example.core.BackendConfig
-import com.example.core.BackendConfigStatus
 import com.example.core.BackendConnectionManager
 import com.example.core.KeystoreCrypto
 import com.example.data.local.SecurityPinVault
 import com.example.data.local.SettingsRepository
 import com.example.data.local.TokenVault
 import com.example.data.remote.GoluApiService
+import com.example.data.remote.GoluV2ApiService
 import com.example.data.remote.dto.RefreshRequestDto
 import com.example.data.repository.AuthRepository
 import com.example.data.repository.GoluFeaturesRepository
+import com.example.data.repository.GoluV2Repository
 import com.example.data.repository.SystemRepository
 import com.example.domain.ai.AndroidActionExecutor
 import com.example.domain.ai.HybridAiRouter
 import com.example.domain.ai.OfflineCommandEngine
 import com.example.domain.automation.AutomationEvaluator
+import com.example.domain.golu2.AudioRecorderHelper
 import com.example.domain.model.UserProfile
 import com.example.domain.phone.ContactLookupHelper
 import com.example.domain.voice.VoiceEngine
@@ -26,7 +28,6 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -45,41 +46,7 @@ class AppContainer(context: Context) {
     val securityPinVault = SecurityPinVault(appContext, crypto)
     val settingsRepository = SettingsRepository(appContext)
 
-    private val centralBaseUrlInterceptor = Interceptor { chain ->
-        val original = chain.request()
-        val evaluated = BackendConfig.evaluateConfigured()
-        val targetBase =
-            if (evaluated.status == BackendConfigStatus.READY_HTTPS ||
-                evaluated.status == BackendConfigStatus.READY_EMULATOR_DEV
-            ) {
-                evaluated.baseUrl.toHttpUrlOrNull()
-            } else {
-                null
-            }
-
-        val updatedRequest =
-            if (targetBase != null) {
-                val basePath = targetBase.encodedPath.trimEnd('/')
-                val relPath = original.url.encodedPath
-                val combinedPath = if (basePath.isNotEmpty() && !relPath.startsWith(basePath)) {
-                    basePath + relPath
-                } else {
-                    relPath
-                }
-                val newUrl =
-                    original.url
-                        .newBuilder()
-                        .scheme(targetBase.scheme)
-                        .host(targetBase.host)
-                        .port(targetBase.port)
-                        .encodedPath(combinedPath)
-                        .build()
-                original.newBuilder().url(newUrl).build()
-            } else {
-                original
-            }
-        chain.proceed(updatedRequest)
-    }
+    private val centralBaseUrlInterceptor = BackendConfig.createBaseUrlInterceptor()
 
     private val authHeaderInterceptor = Interceptor { chain ->
         val original = chain.request()
@@ -111,7 +78,7 @@ class AppContainer(context: Context) {
 
     private val refreshApi: GoluApiService =
         Retrofit.Builder()
-            .baseUrl("https://unconfigured.invalid/")
+            .baseUrl(BackendConfig.getRetrofitBaseUrl())
             .client(refreshClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
@@ -191,17 +158,19 @@ class AppContainer(context: Context) {
 
     private val retrofit: Retrofit =
         Retrofit.Builder()
-            .baseUrl("https://unconfigured.invalid/")
+            .baseUrl(BackendConfig.getRetrofitBaseUrl())
             .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
 
     val apiService: GoluApiService = retrofit.create(GoluApiService::class.java)
+    val apiV2Service: GoluV2ApiService = retrofit.create(GoluV2ApiService::class.java)
 
     val authRepository = AuthRepository(apiService, tokenVault)
     val systemRepository = SystemRepository(appContext, apiService)
     val backendConnectionManager = BackendConnectionManager(appContext, systemRepository)
     val featuresRepository = GoluFeaturesRepository(apiService)
+    val goluV2Repository = GoluV2Repository(apiV2Service)
 
     val voiceEngine = VoiceEngine(appContext)
     val wakeWordEngine = WakeWordEngine(appContext)
@@ -210,4 +179,5 @@ class AppContainer(context: Context) {
     val offlineCommandEngine = OfflineCommandEngine(appContext, actionExecutor)
     val hybridAiRouter = HybridAiRouter(apiService, offlineCommandEngine)
     val automationEvaluator = AutomationEvaluator(appContext, actionExecutor, voiceEngine)
+    val audioRecorderHelper = AudioRecorderHelper(appContext)
 }

@@ -51,12 +51,27 @@ def main() -> int:
             "automation_conditions",
             "automation_actions",
             "automation_execution_logs",
+            "knowledge_documents",
+            "notification_insights",
+            "translation_history",
+            "research_reports",
+            "coding_history",
+            "creative_assets",
+            "voice_recordings",
+            "smart_home_configs",
+            "smart_home_devices",
+            "expense_budgets",
+            "expense_records",
+            "study_sessions",
+            "travel_plans",
+            "sync_checkpoints",
+            "diagnostic_events",
         }
         missing = sorted(required - tables)
         if missing:
             print(f"ERROR: Missing tables (run 'alembic upgrade head'): {missing}")
             return 2
-        print("OK: PostgreSQL connected and all Phase 1-15 tables exist.")
+        print("OK: PostgreSQL connected and all Phase 1-20 (GOLU 2.0) tables exist.")
         return 0
     finally:
         db.close()

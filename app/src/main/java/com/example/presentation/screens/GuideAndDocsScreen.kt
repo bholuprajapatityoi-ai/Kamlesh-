@@ -37,15 +37,15 @@ fun GuideAndDocsScreen(
     val sections = listOf(
         "1. Wake Phrase & Voice Commands" to
             "Say \"Hey Golu\" (when Wake-Word monitoring is enabled in Assistant tab) or tap the glowing GOLU orb. GOLU supports Hindi, Hinglish, and English.",
-        "2. Smart Personal Memory (Phase 7)" to
+        "2. Smart Personal Memory" to
             "Say \"GOLU, ye yaad rakhna...\" and confirm the card to save. GOLU never saves chats silently, and passwords/OTPs/API keys are automatically blocked.",
-        "3. Smart Phone & WhatsApp (Phases 8–9)" to
+        "3. Smart Phone & WhatsApp" to
             "Control volume, media playback, Wi-Fi/Bluetooth/Display settings, alarms, and dialer calls. For WhatsApp, GOLU prepares an editable draft in Hindi/Hinglish/English and waits for your confirmation before opening WhatsApp.",
-        "4. Daily Life & WorkManager Reminders (Phase 10)" to
+        "4. Daily Life & WorkManager Reminders" to
             "Manage Reminders, Tasks, Timetable, Calendar Events, and Morning/Evening summaries. Notifications include Done and Snooze (10m) actions.",
-        "5. Family Mode & Papa Interface (Phase 11)" to
+        "5. Family Mode & Papa Interface" to
             "Create a family group and invite members with separate logins. Private memories and private chats are never visible to other members or admins. Enable Papa-Friendly Mode for extra-large simplified controls.",
-        "6. Complete Security & Automatic Cloud Sync (Phase 12)" to
+        "6. Complete Security & Automatic Cloud Sync" to
             "Set a Keystore-encrypted 4–6 digit PIN in Security Dashboard, revoke active sessions, or wipe personal data. GOLU connects automatically to its HTTPS backend on launch and reconnects whenever internet returns; check Settings > Automatic Backend Connection anytime to retry.",
     )
 

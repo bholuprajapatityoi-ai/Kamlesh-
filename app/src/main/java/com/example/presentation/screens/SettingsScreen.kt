@@ -123,7 +123,7 @@ fun SettingsScreen(
                 // Voice & Speech
                 GoluGlassCard {
                     Text(
-                        text = "Voice & Language (Phase 4)",
+                        text = "Voice & Language",
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -237,7 +237,7 @@ fun SettingsScreen(
                     Spacer(Modifier.height(8.dp))
                     SettingSwitchRow(
                         title = "Temporary Session Context",
-                        subtitle = "Multi-turn context during active session (permanent memory reserved for Phase 7).",
+                        subtitle = "Multi-turn context during active session (use Personal Memory for permanent saved items).",
                         checked = settings.keepSessionContext,
                         onCheckedChange = onKeepContextChange,
                         testTag = "setting_temp_context",

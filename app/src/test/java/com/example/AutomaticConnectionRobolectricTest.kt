@@ -26,10 +26,17 @@ import com.example.presentation.screens.SettingsScreen
 import com.example.ui.theme.GoluTheme
 import java.io.IOException
 import java.lang.reflect.Proxy
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.Response as OkHttpResponse
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -243,6 +250,93 @@ class AutomaticConnectionRobolectricTest {
         val res = repo.login("boss@example.com", "StrongPassword!123")
         assertTrue(res is NetworkResult.Error)
         assertEquals("UNCONFIGURED", (res as NetworkResult.Error).causeCategory)
+    }
+
+    @Test
+    fun `backend config validates security rules, thread safety, and fail-closed interceptor`() {
+        // Rejects embedded credentials, query/fragment, and disallowed hosts
+        assertEquals(
+            BackendConfigStatus.UNCONFIGURED,
+            BackendConfig.evaluate("https://user:pass@api.example.com").status,
+        )
+        assertEquals(
+            BackendConfigStatus.UNCONFIGURED,
+            BackendConfig.evaluate("https://api.example.com?token=123").status,
+        )
+        assertEquals(
+            BackendConfigStatus.INVALID_LOCALHOST,
+            BackendConfig.evaluate("https://0.0.0.0:8000").status,
+        )
+        assertEquals(
+            BackendConfig.UNCONFIGURED_SENTINEL_URL,
+            BackendConfig.getRetrofitBaseUrl("UNCONFIGURED"),
+        )
+        assertEquals(
+            "https://api.example.com/v1/",
+            BackendConfig.getRetrofitBaseUrl("https://api.example.com/v1"),
+        )
+
+        // Fail-closed OkHttp interceptor throws IOException when unconfigured
+        val unconfiguredClient =
+            OkHttpClient.Builder()
+                .addInterceptor(
+                    BackendConfig.createBaseUrlInterceptor { BackendConfig.evaluate("UNCONFIGURED") }
+                )
+                .build()
+        var thrown: IOException? = null
+        try {
+            unconfiguredClient
+                .newCall(Request.Builder().url("https://unconfigured.invalid/api/v1/health").build())
+                .execute()
+        } catch (e: IOException) {
+            thrown = e
+        }
+        assertTrue(thrown != null)
+
+        // Thread-safe concurrent OkHttp request rewriting with base-path preservation
+        val readyClient =
+            OkHttpClient.Builder()
+                .addInterceptor(
+                    BackendConfig.createBaseUrlInterceptor {
+                        BackendConfig.evaluate("https://golu.example.com/prod")
+                    }
+                )
+                .addInterceptor(
+                    Interceptor { chain ->
+                        val req = chain.request()
+                        OkHttpResponse.Builder()
+                            .request(req)
+                            .protocol(Protocol.HTTP_1_1)
+                            .code(200)
+                            .message("OK")
+                            .body(req.url.toString().toResponseBody("text/plain".toMediaType()))
+                            .build()
+                    }
+                )
+                .build()
+
+        val pool = Executors.newFixedThreadPool(8)
+        try {
+            val tasks =
+                (1..16).map { idx ->
+                    Callable {
+                        val req =
+                            Request.Builder()
+                                .url("https://unconfigured.invalid/api/v1/health?req=$idx")
+                                .build()
+                        readyClient.newCall(req).execute().use { resp ->
+                            assertEquals(200, resp.code)
+                            resp.body?.string().orEmpty()
+                        }
+                    }
+                }
+            val results = pool.invokeAll(tasks).map { it.get() }
+            results.forEachIndexed { i, url ->
+                assertEquals("https://golu.example.com/prod/api/v1/health?req=${i + 1}", url)
+            }
+        } finally {
+            pool.shutdownNow()
+        }
     }
 
     private fun fakeApiService(

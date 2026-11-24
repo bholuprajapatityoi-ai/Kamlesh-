@@ -37,6 +37,8 @@ class MemoryRecord(Base):
         String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
     category: Mapped[str] = mapped_column(String(60), nullable=False, default="Custom Notes")
+    title: Mapped[str] = mapped_column(String(160), nullable=False, default="")
+    tags_csv: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     content: Mapped[str] = mapped_column(Text, nullable=False)
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     family_shared: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)

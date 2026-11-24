@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import Boolean, DateTime, ForeignKey, Index, String, Text
+from typing import Optional
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.base import Base
@@ -40,6 +41,9 @@ class AppPreference(Base):
     alias_name: Mapped[str] = mapped_column(String(80), nullable=False)
     package_name: Mapped[str] = mapped_column(String(180), nullable=False)
     is_favourite: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    launch_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    shortcut_command: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    last_launched_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow, nullable=False
     )

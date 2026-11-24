@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.navigation.GoluMainShell
 import com.example.presentation.viewmodel.GoluFeaturesViewModel
+import com.example.presentation.viewmodel.GoluV2ViewModel
 import com.example.presentation.viewmodel.GoluViewModel
 import com.example.ui.theme.GoluTheme
 
@@ -26,9 +27,17 @@ class MainActivity : ComponentActivity() {
                 viewModel(
                     factory = GoluFeaturesViewModel.Factory(applicationContext, app.container)
                 )
+            val v2ViewModel: GoluV2ViewModel =
+                viewModel(
+                    factory = GoluV2ViewModel.Factory(applicationContext, app.container)
+                )
             val settings by goluViewModel.settings.collectAsStateWithLifecycle()
             GoluTheme(darkTheme = settings.isDarkTheme) {
-                GoluMainShell(viewModel = goluViewModel, featuresViewModel = featuresViewModel)
+                GoluMainShell(
+                    viewModel = goluViewModel,
+                    featuresViewModel = featuresViewModel,
+                    v2ViewModel = v2ViewModel,
+                )
             }
         }
     }

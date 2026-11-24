@@ -26,6 +26,16 @@ services:
         value: openai
       - key: OPENAI_API_KEY
         sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: OPENAI_VISION_MODEL
+        value: gpt-4o-mini
+      - key: OPENAI_IMAGE_MODEL
+        value: dall-e-3
+      - key: OPENAI_TIMEOUT_SECONDS
+        value: "25.0"
+      - key: TAVILY_API_KEY
+        sync: false
       - key: CORS_ALLOWED_ORIGINS
         value: "*"
 

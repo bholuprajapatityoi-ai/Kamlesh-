@@ -31,6 +31,12 @@ class AssistantSettings(Base):
     keep_conversation_history: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     privacy_redact_logs: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
+    # Phase 19 Feature 15: Custom AI Personality
+    humor_level: Mapped[int] = mapped_column(default=70, nullable=False)
+    response_length: Mapped[str] = mapped_column(String(20), default="MEDIUM", nullable=False)
+    avatar_style: Mapped[str] = mapped_column(String(40), default="CYBER_BOT", nullable=False)
+    custom_system_notes: Mapped[str] = mapped_column(String(255), default="", nullable=False)
+
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False
